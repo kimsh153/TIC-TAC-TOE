@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 
-interface SquareValue {
+type SquareValue = {
   value: string;
   onSquareClick: () => void;
-}
+};
 
 function Square({ value, onSquareClick }: SquareValue) {
   return (
@@ -14,11 +14,11 @@ function Square({ value, onSquareClick }: SquareValue) {
   );
 }
 
-interface BoardValue {
+type BoardValue = {
   xIsNext: boolean;
   squares: Array<string>;
   onPlay: (value: Array<string>) => void;
-}
+};
 
 function Board({ xIsNext, squares, onPlay }: BoardValue) {
   const handleClick = (i: number) => {
@@ -46,19 +46,31 @@ function Board({ xIsNext, squares, onPlay }: BoardValue) {
     <>
       <div className="status">{status}</div>
       <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
+        {[0, 1, 2].map((index, idx) => (
+          <Square
+            key={idx}
+            value={squares[index]}
+            onSquareClick={() => handleClick(index)}
+          />
+        ))}
       </div>
       <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
+        {[3, 4, 5].map((index, idx) => (
+          <Square
+            key={idx}
+            value={squares[index]}
+            onSquareClick={() => handleClick(index)}
+          />
+        ))}
       </div>
       <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
+        {[6, 7, 8].map((index, idx) => (
+          <Square
+            key={idx}
+            value={squares[index]}
+            onSquareClick={() => handleClick(index)}
+          />
+        ))}
       </div>
     </>
   );
@@ -90,6 +102,7 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
   const [history, setHistory] = useState(Array(9).fill([]));
   const currentSquares = history[currentMove];
+  const [checked, setChecked] = useState(false);
 
   const handlePlay = (nextSquares: Array<string>) => {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -97,20 +110,21 @@ export default function Game() {
     setCurrentMove(nextHistory.length - 1);
   };
 
-  const jumpTo = (nextMove: number) => {
+  const jumpTo = (nextMove: number, nextSquares: Array<string>) => {
+    setHistory([...history.slice(0, nextMove), nextSquares]);
     setCurrentMove(nextMove);
   };
 
   const moves = history.map((squares, move) => {
     let description;
     if (move > 0) {
-      description = "Go to move #" + move;
+      description = "You are at move #" + move;
     } else {
       description = "Go to game start";
     }
     return (
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+        <button onClick={() => jumpTo(move, squares)}>{description}</button>
       </li>
     );
   });
@@ -125,10 +139,36 @@ export default function Game() {
             onPlay={handlePlay}
           />
         </div>
+        <br />
         <div className="game-info">
-          <ol>{moves}</ol>
+          <Toggle checked={checked} setChecked={setChecked}></Toggle>
+          <ol>{checked ? moves.reverse() : moves}</ol>
         </div>
       </div>
     </>
   );
 }
+
+type ToggleCheckedValue = {
+  checked: boolean;
+  setChecked: (checked: boolean) => void;
+};
+
+const Toggle = ({ checked, setChecked }: ToggleCheckedValue) => {
+  const handleToggle = () => {
+    setChecked(!checked);
+  };
+
+  return (
+    <div className="toggle-container">
+      <input
+        type="checkbox"
+        id="toggle"
+        className="toggle-checkbox"
+        checked={checked}
+        onChange={handleToggle}
+      />
+      <label htmlFor="toggle" className="toggle-label"></label>
+    </div>
+  );
+};
