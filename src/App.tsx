@@ -18,9 +18,10 @@ type BoardValue = {
   xIsNext: boolean;
   squares: Array<string>;
   onPlay: (value: Array<string>) => void;
+  moves: number;
 };
 
-function Board({ xIsNext, squares, onPlay }: BoardValue) {
+function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
   const handleClick = (i: number) => {
     if (squares[i] || calculateWinner(squares)) {
       return;
@@ -34,12 +35,15 @@ function Board({ xIsNext, squares, onPlay }: BoardValue) {
     onPlay(nextSquares);
   };
 
-  const winner = calculateWinner(squares);
   let status;
-  if (winner) {
-    status = "Winner: " + winner;
+  if (moves < 9) {
+    if (calculateWinner(squares)) {
+      status = "Winner: " + (xIsNext ? "O" : "X");
+    } else {
+      status = "Next Player: " + (xIsNext ? "X" : "O");
+    }
   } else {
-    status = "Next Player: " + (xIsNext ? "X" : "O");
+    status = "Draw!!";
   }
 
   return (
@@ -91,7 +95,10 @@ function calculateWinner(squares: string[]) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      squares[a] = "☐";
+      squares[b] = "☐";
+      squares[c] = "☐";
+      return true;
     }
   }
   return null;
@@ -137,6 +144,7 @@ export default function Game() {
             xIsNext={xIsNext}
             squares={currentSquares}
             onPlay={handlePlay}
+            moves={currentMove}
           />
         </div>
         <br />
@@ -169,6 +177,7 @@ const Toggle = ({ checked, setChecked }: ToggleCheckedValue) => {
         onChange={handleToggle}
       />
       <label htmlFor="toggle" className="toggle-label"></label>
+      <p>정렬</p>
     </div>
   );
 };

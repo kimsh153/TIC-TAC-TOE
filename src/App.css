@@ -16,7 +16,9 @@
 }
 
 .toggle-container {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .toggle-checkbox {
@@ -49,4 +51,10 @@
 
 .toggle-checkbox:checked + .toggle-label:after {
   transform: translateX(24px);
+}
+
+.toggle-align {
+  display: flex;
+  align-items: center;
+  padding: 0px;
 }
