@@ -3,7 +3,7 @@ import "./App.css";
 
 type SquareValue = {
   value: string;
-  onSquareClick: () => void;
+  onSquareClick?: () => void;
 };
 
 function Square({ value, onSquareClick }: SquareValue) {
@@ -36,7 +36,7 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
   };
 
   let status;
-  if (moves < 9) {
+  if (moves || 0 < 9) {
     if (calculateWinner(squares)) {
       status = "Winner: " + (xIsNext ? "O" : "X");
     } else {
@@ -132,6 +132,21 @@ export default function Game() {
     return (
       <li key={move}>
         <button onClick={() => jumpTo(move, squares)}>{description}</button>
+        <div className="board-row">
+          {[0, 1, 2].map((index, idx) => (
+            <Square key={idx} value={squares[index]} />
+          ))}
+        </div>
+        <div className="board-row">
+          {[3, 4, 5].map((index, idx) => (
+            <Square key={idx} value={squares[index]} />
+          ))}
+        </div>
+        <div className="board-row">
+          {[6, 7, 8].map((index, idx) => (
+            <Square key={idx} value={squares[index]} />
+          ))}
+        </div>
       </li>
     );
   });
