@@ -8,7 +8,10 @@ type SquareValue = {
 
 function Square({ value, onSquareClick }: SquareValue) {
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button
+      className="w-10 h-10 bg-white inline-flex items-center justify-center text-2xl font-bold border"
+      onClick={onSquareClick}
+    >
       {value}
     </button>
   );
@@ -36,7 +39,7 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
   };
 
   let status;
-  if (moves || 0 < 9) {
+  if (moves < 9) {
     if (calculateWinner(squares)) {
       status = "Winner: " + (xIsNext ? "O" : "X");
     } else {
@@ -49,7 +52,7 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
   return (
     <>
       <div className="status">{status}</div>
-      <div className="board-row">
+      <div className="flex items-center">
         {[0, 1, 2].map((index, idx) => (
           <Square
             key={idx}
@@ -58,7 +61,7 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
           />
         ))}
       </div>
-      <div className="board-row">
+      <div className="flex items-center">
         {[3, 4, 5].map((index, idx) => (
           <Square
             key={idx}
@@ -67,7 +70,7 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
           />
         ))}
       </div>
-      <div className="board-row">
+      <div className="flex items-center">
         {[6, 7, 8].map((index, idx) => (
           <Square
             key={idx}
@@ -131,18 +134,19 @@ export default function Game() {
     }
     return (
       <li key={move}>
+        <br />
         <button onClick={() => jumpTo(move, squares)}>{description}</button>
-        <div className="board-row">
+        <div className="flex items-center">
           {[0, 1, 2].map((index, idx) => (
             <Square key={idx} value={squares[index]} />
           ))}
         </div>
-        <div className="board-row">
+        <div className="flex items-center">
           {[3, 4, 5].map((index, idx) => (
             <Square key={idx} value={squares[index]} />
           ))}
         </div>
-        <div className="board-row">
+        <div className="flex items-center">
           {[6, 7, 8].map((index, idx) => (
             <Square key={idx} value={squares[index]} />
           ))}
@@ -183,15 +187,20 @@ const Toggle = ({ checked, setChecked }: ToggleCheckedValue) => {
   };
 
   return (
-    <div className="toggle-container">
-      <input
-        type="checkbox"
-        id="toggle"
-        className="toggle-checkbox"
-        checked={checked}
-        onChange={handleToggle}
-      />
-      <label htmlFor="toggle" className="toggle-label"></label>
+    <div className="flex items-center gap-1">
+      <label
+        htmlFor="toggle"
+        className="relative inline-flex items-center cursor-pointer"
+      >
+        <input
+          type="checkbox"
+          id="toggle"
+          className="sr-only peer"
+          checked={checked}
+          onChange={handleToggle}
+        />
+        <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:after:translate-x-full peer-checked:after:border-white after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r from-gray-800 to-black"></div>
+      </label>
       <p>정렬</p>
     </div>
   );
