@@ -46,14 +46,12 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
   };
 
   let status;
-  if (moves < 9) {
-    if (calculateWinner(squares)) {
-      status = "Winner: " + (xIsNext ? "O" : "X");
-    } else {
-      status = "Next Player: " + (xIsNext ? "X" : "O");
-    }
-  } else {
+  if (calculateWinner(squares)) {
+    status = "Winner: " + (xIsNext ? "O" : "X");
+  } else if (moves > 9) {
     status = "Draw!!";
+  } else {
+    status = "Next Player: " + (xIsNext ? "X" : "O");
   }
 
   return (

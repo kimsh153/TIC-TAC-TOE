@@ -31,8 +31,12 @@ export default function Game() {
     }
     return (
       <li key={move}>
-        <br />
-        <button onClick={() => jumpTo(move, squares)}>{description}</button>
+        <button
+          onClick={() => jumpTo(move, squares)}
+          className="bg-slate-400 rounded mx-1 my-2 p-1"
+        >
+          {description}
+        </button>
         <div className="flex items-center">
           {[0, 1, 2].map((index, idx) => (
             <Square key={idx} value={squares[index]} />
