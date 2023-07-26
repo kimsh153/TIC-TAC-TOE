@@ -5,21 +5,22 @@ import Board from "./Board";
 import Toggle from "./Toggle";
 
 export default function Game() {
-  const [currentMove, setCurrentMove] = useState(0);
+  const [history, setHistory] = useState(Array(1).fill([]));
+  const currentMove = history.length - 1;
   const xIsNext = currentMove % 2 === 0;
-  const [history, setHistory] = useState(Array(9).fill([]));
   const currentSquares = history[currentMove];
   const [checked, setChecked] = useState(false);
 
   const handlePlay = (nextSquares: Array<string>) => {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    const nextHistory = [
+      ...history.slice(0, currentMove + 1),
+      nextSquares.slice(),
+    ];
     setHistory(nextHistory);
-    setCurrentMove(nextHistory.length - 1);
   };
 
   const jumpTo = (nextMove: number, nextSquares: Array<string>) => {
-    setHistory([...history.slice(0, nextMove), nextSquares]);
-    setCurrentMove(nextMove);
+    setHistory([...history.slice(0, nextMove), nextSquares.slice()]);
   };
 
   const moves = history.map((squares, move) => {
