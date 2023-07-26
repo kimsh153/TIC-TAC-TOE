@@ -70,7 +70,7 @@ export default function Game() {
         <br />
         <div className="game-info">
           <Toggle checked={checked} setChecked={setChecked}></Toggle>
-          <ol>{checked ? moves.reverse() : moves}</ol>
+          <ol>{checked ? moves.slice().reverse() : moves}</ol>
         </div>
       </div>
     </>
