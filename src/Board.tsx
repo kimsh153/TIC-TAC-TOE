@@ -1,27 +1,28 @@
 import Square from "./Square";
 
-function calculateWinner(squares: string[]) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+const lines = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
 
+function calculateWinner(squares: string[]) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      squares[a] = "☐";
-      squares[b] = "☐";
-      squares[c] = "☐";
-      return true;
+      const calculateSquares = squares.slice();
+      calculateSquares[a] = "☐";
+      calculateSquares[b] = "☐";
+      calculateSquares[c] = "☐";
+      return calculateSquares;
     }
   }
-  return null;
+  return squares;
 }
 
 type BoardValue = {
@@ -33,7 +34,7 @@ type BoardValue = {
 
 function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
   const handleClick = (i: number) => {
-    if (squares[i] || calculateWinner(squares)) {
+    if (squares[i] || calculateWinner(squares) != squares) {
       return;
     }
     const nextSquares = squares.slice();
@@ -42,13 +43,13 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
     } else {
       nextSquares[i] = "O";
     }
-    onPlay(nextSquares);
+    onPlay(calculateWinner(nextSquares));
   };
 
   let status;
-  if (calculateWinner(squares)) {
+  if (calculateWinner(squares) != squares) {
     status = "Winner: " + (xIsNext ? "O" : "X");
-  } else if (moves > 9) {
+  } else if (moves >= 9) {
     status = "Draw!!";
   } else {
     status = "Next Player: " + (xIsNext ? "X" : "O");
