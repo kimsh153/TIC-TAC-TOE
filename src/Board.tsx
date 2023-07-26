@@ -58,28 +58,10 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
   return (
     <>
       <div className="status">{status}</div>
-      <div className="flex items-center">
-        {[0, 1, 2].map((index, idx) => (
+      <div className="grid grid-cols-3 w-[120px]">
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
           <Square
-            key={idx}
-            value={squares[index]}
-            onSquareClick={() => handleClick(index)}
-          />
-        ))}
-      </div>
-      <div className="flex items-center">
-        {[3, 4, 5].map((index, idx) => (
-          <Square
-            key={idx}
-            value={squares[index]}
-            onSquareClick={() => handleClick(index)}
-          />
-        ))}
-      </div>
-      <div className="flex items-center">
-        {[6, 7, 8].map((index, idx) => (
-          <Square
-            key={idx}
+            key={index}
             value={squares[index]}
             onSquareClick={() => handleClick(index)}
           />

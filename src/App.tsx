@@ -31,26 +31,16 @@ export default function Game() {
       description = "Go to game start";
     }
     return (
-      <li key={move}>
+      <li key={move} className="flex flex-col items-center">
         <button
           onClick={() => jumpTo(move, squares)}
           className="bg-slate-400 rounded mx-1 my-2 p-1"
         >
           {description}
         </button>
-        <div className="flex items-center">
-          {[0, 1, 2].map((index, idx) => (
-            <Square key={idx} value={squares[index]} />
-          ))}
-        </div>
-        <div className="flex items-center">
-          {[3, 4, 5].map((index, idx) => (
-            <Square key={idx} value={squares[index]} />
-          ))}
-        </div>
-        <div className="flex items-center">
-          {[6, 7, 8].map((index, idx) => (
-            <Square key={idx} value={squares[index]} />
+        <div className="grid grid-cols-3 w-[120px]">
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+            <Square key={index} value={squares[index]} />
           ))}
         </div>
       </li>
@@ -59,20 +49,16 @@ export default function Game() {
 
   return (
     <>
-      <div className="game">
-        <div className="game-board">
-          <Board
-            xIsNext={xIsNext}
-            squares={currentSquares}
-            onPlay={handlePlay}
-            moves={currentMove}
-          />
-        </div>
+      <div className="flex flex-col items-center">
+        <Board
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          onPlay={handlePlay}
+          moves={currentMove}
+        />
         <br />
-        <div className="game-info">
-          <Toggle checked={checked} setChecked={setChecked}></Toggle>
-          <ol>{checked ? moves.slice().reverse() : moves}</ol>
-        </div>
+        <Toggle checked={checked} setChecked={setChecked}></Toggle>
+        <ol>{checked ? moves.slice().reverse() : moves}</ol>
       </div>
     </>
   );
