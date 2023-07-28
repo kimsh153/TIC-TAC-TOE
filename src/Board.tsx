@@ -19,16 +19,18 @@ type BoardValue = {
   isEnd: boolean;
 };
 
-function Board({ xIsNext, squares, onPlay, moves, isEnd: isEnd }: BoardValue) {
+function Board({ xIsNext, squares, onPlay, moves, isEnd }: BoardValue) {
   let status;
+  let win = moves >= 6;
 
   const handleClick = (i: number) => {
     if (squares[i] || isEnd) {
       return;
     }
+    // console.log(isEnd);
     const nextSquares = squares.slice();
     nextSquares[i] = xIsNext ? "X" : "O";
-    onPlay(calculateWinner(nextSquares));
+    onPlay(nextSquares);
   };
 
   const calculateWinner = (squares: string[]) => {
@@ -43,10 +45,13 @@ function Board({ xIsNext, squares, onPlay, moves, isEnd: isEnd }: BoardValue) {
         calculatedSquares[a] = "☐";
         calculatedSquares[b] = "☐";
         calculatedSquares[c] = "☐";
-        isEnd = true;
+        win = true;
+        // isEnd = true;
+        // console.log("Asdf", isEnd);
         return calculatedSquares;
       }
     }
+    win = false;
     return squares;
   };
 

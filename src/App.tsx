@@ -10,19 +10,50 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
   const [checked, setChecked] = useState(false);
-  let isEnd = false;
+  const [isEnd, setIsEnd] = useState(false);
+
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  const calculateWinner = (squares: string[]) => {
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (
+        squares[a] &&
+        squares[a] === squares[b] &&
+        squares[a] === squares[c]
+      ) {
+        const calculatedSquares = squares.slice();
+        calculatedSquares[a] = "☐";
+        calculatedSquares[b] = "☐";
+        calculatedSquares[c] = "☐";
+        setIsEnd(true);
+        return calculatedSquares;
+      }
+    }
+    return squares;
+  };
 
   const handlePlay = (nextSquares: Array<string>) => {
     const nextHistory = [
       ...history.slice(0, currentMove + 1),
-      nextSquares.slice(),
+      calculateWinner(nextSquares),
     ];
     setHistory(nextHistory);
   };
 
   const jumpTo = (nextMove: number, nextSquares: Array<string>) => {
     setHistory([...history.slice(0, nextMove), nextSquares.slice()]);
-    isEnd = false;
+    if (history.length - 1 != nextMove) {
+      setIsEnd(false);
+    }
   };
 
   const moves = history.map((squares, move) => {
@@ -35,7 +66,7 @@ export default function Game() {
     return (
       <li key={move} className="flex flex-col items-center">
         <button
-          onClick={() => jumpTo(move, squares)}
+          onClick={() => jumpTo(move, calculateWinner(squares))}
           className="bg-slate-400 rounded mx-1 my-2 p-1"
         >
           {description}
