@@ -10,6 +10,7 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
   const [checked, setChecked] = useState(false);
+  let isEnd = false;
 
   const handlePlay = (nextSquares: Array<string>) => {
     const nextHistory = [
@@ -21,6 +22,7 @@ export default function Game() {
 
   const jumpTo = (nextMove: number, nextSquares: Array<string>) => {
     setHistory([...history.slice(0, nextMove), nextSquares.slice()]);
+    isEnd = false;
   };
 
   const moves = history.map((squares, move) => {
@@ -55,6 +57,7 @@ export default function Game() {
           squares={currentSquares}
           onPlay={handlePlay}
           moves={currentMove}
+          isEnd={isEnd}
         />
         <br />
         <Toggle checked={checked} setChecked={setChecked}></Toggle>

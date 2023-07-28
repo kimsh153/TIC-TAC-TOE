@@ -11,43 +11,46 @@ const lines = [
   [2, 4, 6],
 ];
 
-function calculateWinner(squares: string[]) {
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      const calculateSquares = squares.slice();
-      calculateSquares[a] = "☐";
-      calculateSquares[b] = "☐";
-      calculateSquares[c] = "☐";
-      return calculateSquares;
-    }
-  }
-  return squares;
-}
-
 type BoardValue = {
   xIsNext: boolean;
   squares: Array<string>;
   onPlay: (value: Array<string>) => void;
   moves: number;
+  isEnd: boolean;
 };
 
-function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
+function Board({ xIsNext, squares, onPlay, moves, isEnd: isEnd }: BoardValue) {
+  let status;
+
   const handleClick = (i: number) => {
-    if (squares[i] || calculateWinner(squares) != squares) {
+    if (squares[i] || isEnd) {
       return;
     }
     const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = "X";
-    } else {
-      nextSquares[i] = "O";
-    }
+    nextSquares[i] = xIsNext ? "X" : "O";
     onPlay(calculateWinner(nextSquares));
   };
 
-  let status;
-  if (calculateWinner(squares) != squares) {
+  const calculateWinner = (squares: string[]) => {
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (
+        squares[a] &&
+        squares[a] === squares[b] &&
+        squares[a] === squares[c]
+      ) {
+        const calculatedSquares = squares.slice();
+        calculatedSquares[a] = "☐";
+        calculatedSquares[b] = "☐";
+        calculatedSquares[c] = "☐";
+        isEnd = true;
+        return calculatedSquares;
+      }
+    }
+    return squares;
+  };
+
+  if (isEnd) {
     status = "Winner: " + (xIsNext ? "O" : "X");
   } else if (moves >= 9) {
     status = "Draw!!";
@@ -57,7 +60,7 @@ function Board({ xIsNext, squares, onPlay, moves }: BoardValue) {
 
   return (
     <>
-      <div className="status">{status}</div>
+      <div>{status}</div>
       <div className="grid grid-cols-3 w-[120px]">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
           <Square
