@@ -67,7 +67,7 @@ export default function Game() {
     return (
       <li key={move} className="flex flex-col items-center">
         <button
-          onClick={() => jumpTo(move, calculateWinner(squares))}
+          onClick={() => jumpTo(move, squares)}
           className="bg-slate-400 rounded mx-1 my-2 p-1"
         >
           {description}
