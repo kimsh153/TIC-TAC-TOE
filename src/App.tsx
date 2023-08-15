@@ -13,40 +13,54 @@ export default function Game() {
   const [isEnd, setIsEnd] = useState(false);
   const squaresArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  const calculateWinner = (squares: string[]) => {
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
+  const boardSize = 3;
+  const lines: number[][] = [];
+
+  for (let i = 0; i < boardSize; i++) {
+    lines.push(Array.from({ length: boardSize }, (_, j) => i * boardSize + j));
+    lines.push(Array.from({ length: boardSize }, (_, j) => j * boardSize + i));
+  }
+
+  lines.push(Array.from({ length: boardSize }, (_, i) => i * boardSize + i));
+  lines.push(
+    Array.from(
+      { length: boardSize },
+      (_, i) => i * boardSize + (boardSize - 1 - i)
+    )
+  );
+
+  const getIsGameEnd = (squares: string[]) => {
+    for (const line of lines) {
+      const [a, b, c] = line;
       if (
         squares[a] &&
         squares[a] === squares[b] &&
         squares[a] === squares[c]
       ) {
-        const calculatedSquares = squares.slice();
-        calculatedSquares[a] = "☐";
-        calculatedSquares[b] = "☐";
-        calculatedSquares[c] = "☐";
-        setIsEnd(true);
-        return calculatedSquares;
+        return true;
       }
     }
-    return squares;
+    return false;
   };
 
   const handlePlay = (nextSquares: Array<string>) => {
-    const nextHistory = [
-      ...history.slice(0, currentMove + 1),
-      calculateWinner(nextSquares),
-    ];
+    let nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    if (getIsGameEnd(nextSquares)) {
+      for (const line of lines) {
+        const [a, b, c] = line;
+        if (
+          nextSquares[a] &&
+          nextSquares[a] === nextSquares[b] &&
+          nextSquares[a] === nextSquares[c]
+        ) {
+          nextSquares[a] = "◻︎";
+          nextSquares[b] = "◻︎";
+          nextSquares[c] = "◻︎";
+        }
+      }
+      setIsEnd(true);
+      nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    }
     setHistory(nextHistory);
   };
 
