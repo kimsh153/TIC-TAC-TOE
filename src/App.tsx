@@ -52,7 +52,7 @@ export default function Game() {
 
   const jumpTo = (nextMove: number, nextSquares: Array<string>) => {
     setHistory([...history.slice(0, nextMove), nextSquares.slice()]);
-    if (history.length - 1 != nextMove) {
+    if (history.length - 1 !== nextMove) {
       setIsEnd(false);
     }
   };
