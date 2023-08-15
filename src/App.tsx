@@ -11,6 +11,7 @@ export default function Game() {
   const currentSquares = history[currentMove];
   const [checked, setChecked] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
+  const squaresArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
   const lines = [
     [0, 1, 2],
@@ -72,7 +73,7 @@ export default function Game() {
           {description}
         </button>
         <div className="grid grid-cols-3 w-[120px]">
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+          {squaresArray.map((index) => (
             <Square key={index} value={squares[index]} />
           ))}
         </div>
@@ -89,6 +90,7 @@ export default function Game() {
           onPlay={handlePlay}
           moves={currentMove}
           isEnd={isEnd}
+          squaresArray={squaresArray}
         />
         <br />
         <Toggle checked={checked} setChecked={setChecked}></Toggle>

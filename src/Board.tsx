@@ -6,9 +6,17 @@ type BoardValue = {
   onPlay: (value: Array<string>) => void;
   moves: number;
   isEnd: boolean;
+  squaresArray: Array<number>;
 };
 
-function Board({ xIsNext, squares, onPlay, moves, isEnd }: BoardValue) {
+function Board({
+  xIsNext,
+  squares,
+  onPlay,
+  moves,
+  isEnd,
+  squaresArray,
+}: BoardValue) {
   let status;
 
   const handleClick = (i: number) => {
@@ -32,7 +40,7 @@ function Board({ xIsNext, squares, onPlay, moves, isEnd }: BoardValue) {
     <>
       <div>{status}</div>
       <div className="grid grid-cols-3 w-[120px]">
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+        {squaresArray.map((index) => (
           <Square
             key={index}
             value={squares[index]}
