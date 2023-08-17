@@ -1,75 +1,70 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import "./App.css";
 import Square from "./Square";
 import Board from "./Board";
 import Toggle from "./Toggle";
+import { WINNING_LINES } from "./constants/WINNING_LINES";
+import { BOARD_SIZE } from "./constants/BOARD_SIZE";
+import { SQUARES_ARRAY } from "./constants/SQUARES_ARRAY";
+
+type GameStatus = {
+  isEnd: true;
+  line: number[];
+} | {
+  isEnd: false;
+}
+function checkIsGameEnd(squares: string[]): GameStatus {
+  for (const line of WINNING_LINES) {
+    // line can be 3 to 9 length array
+    const base = squares[line[0]];
+    if (!base) continue;
+
+    const isEnd = line.every((value) => {
+      if (squares[value] === base) return true
+      return false
+    });
+    if (!isEnd) continue;
+
+    return { isEnd: true, line }
+  }
+  return { isEnd: false }
+}
 
 export default function Game() {
-  const [history, setHistory] = useState(Array(1).fill([]));
+  const [history, setHistory] = useState(() => Array(1).fill([]));
   const currentMove = history.length - 1;
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
-  const [checked, setChecked] = useState(false);
-  const [isEnd, setIsEnd] = useState(false);
-  const squaresArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-  const boardSize = 3;
-  const lines: number[][] = [];
+  const [ascending, setAscending] = useState(false);
+  const [isGameEnd, setIsGameEnd] = useState(false);
 
-  for (let i = 0; i < boardSize; i++) {
-    lines.push(Array.from({ length: boardSize }, (_, j) => i * boardSize + j));
-    lines.push(Array.from({ length: boardSize }, (_, j) => j * boardSize + i));
-  }
+  const handlePlay = useCallback((squares: Array<string>) => {
+    const nextSquares = squares.slice(); // 인자를 수정하지 않기 위함
 
-  lines.push(Array.from({ length: boardSize }, (_, i) => i * boardSize + i));
-  lines.push(
-    Array.from(
-      { length: boardSize },
-      (_, i) => i * boardSize + (boardSize - 1 - i)
-    )
-  );
-
-  const getIsGameEnd = (squares: string[]) => {
-    for (const line of lines) {
-      const [a, b, c] = line;
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c]
-      ) {
-        return true;
+    const gameStatus = checkIsGameEnd(nextSquares);
+    if (gameStatus.isEnd) {
+      for (let index = 0; index < BOARD_SIZE; index++) {
+        nextSquares[gameStatus.line[index]] = "◻︎";
       }
     }
-    return false;
-  };
+    setIsGameEnd(gameStatus.isEnd);
+    setHistory(prevHistory => [...prevHistory.slice(), nextSquares]);
+  }, []);
 
-  const handlePlay = (nextSquares: Array<string>) => {
-    let nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-    if (getIsGameEnd(nextSquares)) {
-      for (const line of lines) {
-        const [a, b, c] = line;
-        if (
-          nextSquares[a] &&
-          nextSquares[a] === nextSquares[b] &&
-          nextSquares[a] === nextSquares[c]
-        ) {
-          nextSquares[a] = "◻︎";
-          nextSquares[b] = "◻︎";
-          nextSquares[c] = "◻︎";
-        }
+
+  const jumpTo = useCallback((nextMove: number, squares: Array<string>) => {
+    const nextSquares = squares.slice();
+
+    const gameStatus = checkIsGameEnd(nextSquares);
+    if (gameStatus.isEnd) {
+      for (let index = 0; index < BOARD_SIZE; index++) {
+        nextSquares[gameStatus.line[index]] = "◻︎";
       }
-      setIsEnd(true);
-      nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     }
-    setHistory(nextHistory);
-  };
-
-  const jumpTo = (nextMove: number, nextSquares: Array<string>) => {
-    setHistory([...history.slice(0, nextMove), nextSquares.slice()]);
-    if (history.length - 1 !== nextMove) {
-      setIsEnd(false);
-    }
-  };
+    setIsGameEnd(gameStatus.isEnd);
+    setHistory(prevHistory => [...prevHistory.slice(0, nextMove), nextSquares]);
+  }, []);
 
   const moves = history.map((squares, move) => {
     let description;
@@ -86,8 +81,8 @@ export default function Game() {
         >
           {description}
         </button>
-        <div className="grid grid-cols-3 w-[120px]">
-          {squaresArray.map((index) => (
+        <div className={`grid grid-cols-${BOARD_SIZE} w-[${BOARD_SIZE * 40}px]`}>
+          {SQUARES_ARRAY.map((index) => (
             <Square key={index} value={squares[index]} />
           ))}
         </div>
@@ -103,12 +98,12 @@ export default function Game() {
           squares={currentSquares}
           onPlay={handlePlay}
           moves={currentMove}
-          isEnd={isEnd}
-          squaresArray={squaresArray}
+          isEnd={isGameEnd}
+          squaresArray={SQUARES_ARRAY}
         />
         <br />
-        <Toggle checked={checked} setChecked={setChecked}></Toggle>
-        <ol className={checked ? "flex flex-col-reverse" : ""}>{moves}</ol>
+        <Toggle checked={ascending} setChecked={setAscending}></Toggle>
+        <ol className={ascending ? "flex flex-col-reverse" : ""}>{moves}</ol>
       </div>
     </>
   );

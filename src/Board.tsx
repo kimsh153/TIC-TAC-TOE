@@ -1,4 +1,5 @@
 import Square from "./Square";
+import { BOARD_SIZE } from "./constants/BOARD_SIZE";
 
 type BoardValue = {
   xIsNext: boolean;
@@ -18,7 +19,6 @@ function Board({
   squaresArray,
 }: BoardValue) {
   let status;
-
   const handleClick = (i: number) => {
     if (squares[i] || isEnd) {
       return;
@@ -30,7 +30,7 @@ function Board({
 
   if (isEnd) {
     status = "Winner: " + (xIsNext ? "O" : "X");
-  } else if (moves >= 9) {
+  } else if (moves >= BOARD_SIZE * BOARD_SIZE) {
     status = "Draw!!";
   } else {
     status = "Next Player: " + (xIsNext ? "X" : "O");
@@ -39,7 +39,7 @@ function Board({
   return (
     <>
       <div>{status}</div>
-      <div className="grid grid-cols-3 w-[120px]">
+      <div className={`grid grid-cols-${BOARD_SIZE} w-[${BOARD_SIZE * 40}px]`}>
         {squaresArray.map((index) => (
           <Square
             key={index}
